@@ -12,6 +12,7 @@
                  [org.clojure/tools.cli         "0.3.3"]
                  [com.stuartsierra/component    "0.3.1"]
                  [spootnik/unilog               "0.7.13"]
+                 [org.clojure/core.memoize      "0.5.8"]
                  [spootnik/uncaught             "0.5.3"]
                  [spootnik/globber              "0.4.1"]
                  [org.javassist/javassist       "3.20.0-GA"]
