@@ -1,6 +1,6 @@
 (ns io.cyanite.store.cassandra
   (:require [qbits.alia            :as alia]
-            [clojure.tools.logging :refer [error]]))
+            [clojure.tools.logging :refer [debug error]]))
 
 (defn insertq-v2
   [session table]
@@ -49,6 +49,8 @@
 
 (defn runq!
   [session prepared-statement values opts]
+  (debug (str "EXECUTE: " (.getQueryString prepared-statement) " "
+              (str values)))
   (let [bound (alia/bind prepared-statement values)]
     (alia/execute session bound opts)))
 

@@ -3,7 +3,7 @@
             [io.cyanite.index           :as index]
             [qbits.alia                 :as alia]
             [globber.glob               :refer [glob]]
-            [clojure.tools.logging      :refer [error]]))
+            [clojure.tools.logging      :refer [debug error]]))
 
 (defn mk-insert-segmentq
   [session]
@@ -63,6 +63,8 @@
 
 (defn runq!
   [session prepared-statement values opts]
+  (debug (str "EXECUTE: " (.getQueryString prepared-statement) " "
+              (str values)))
   (let [bound (alia/bind prepared-statement values)]
     (alia/execute session bound opts)))
 
