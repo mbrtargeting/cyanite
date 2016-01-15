@@ -75,9 +75,15 @@
   (memoize/ttl (fn [index pos segment]
                  (by-segment index pos segment)) :ttl/threshold 120000))
 
+(defn pmapcat [f batches]
+  (->> batches
+       (pmap f)
+       (apply concat)
+       doall))
+
 (defn by-segments
   [index pos segments]
-  (mapcat (partial by-segment-memo index pos) segments))
+  (pmapcat (partial by-segment-memo index pos) segments))
 
 (defn register!
   [index path]
@@ -106,12 +112,12 @@
   (let [segments (segmentize pattern)
         length   (count segments)
         pred     (partial (if leaves? = <=) length)
-        matches  (for [[pos pattern] segments]
-                   (->> (by-pos-memo index pos)
-                        (glob pattern)
-                        (by-segments index pos)
-                        (filter (comp pred second))
-                        (set)))
+        matches  (pmap (fn [[pos pattern]]
+                         (->> (by-pos-memo index pos)
+                              (glob pattern)
+                              (by-segments index pos)
+                              (filter (comp pred second))
+                              (set))) segments)
         paths    (reduce union #{} matches)]
     (->> (reduce intersection paths matches)
          (map (partial truncate-to length))
